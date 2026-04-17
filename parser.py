@@ -39,7 +39,7 @@ class Parser:
         left, right = line.split("=", 1)
         target = left.strip()
 
-        if not self._is_identifier(target):
+        if target == "":
             raise ValueError(f"Line {line_num}: invalid target '{target}'")
 
         transformation_name, config_args, input_args = self._parse_call(
@@ -54,14 +54,14 @@ class Parser:
         )
 
     def _parse_call(self, call, line_num):
-        first_open = call.find("{")
+        first_open = call.find("{") #finds first  {} for transf name
         first_close = call.find("}")
 
         if first_open == -1 or first_close == -1 or first_close < first_open:
             raise ValueError(f"Line {line_num}: invalid transformation call")
 
         transformation_name = call[:first_open].strip()
-        if not self._is_identifier(transformation_name):
+        if transformation_name == "":
             raise ValueError(
                 f"Line {line_num}: invalid transformation '{transformation_name}'"
             )
@@ -70,13 +70,30 @@ class Parser:
         rest = call[first_close + 1 :].strip()
 
         if not rest.startswith("{") or not rest.endswith("}"):
-            raise ValueError(f"Line {line_num}: expected second '{{...}}' block")
+            raise ValueError(f"Line {line_num}: expected second block")
 
         input_call = rest[1:-1]
 
-        config_args = self._parse_config_args(config_call, line_num)
-        input_args = self._parse_input_args(input_call, line_num)
+        config_args = self._split_args(config_call)
+        input_args = self._split_args(input_call)
 
         return transformation_name, config_args, input_args
 
-    
+    def _split_args(self, text):
+        text = text.strip()
+
+        if text == "":
+            return []
+
+        pieces = text.split(",")
+        args = []
+
+        for piece in pieces:
+            arg = piece.strip()
+
+            if arg == "":
+                raise ValueError("Found an empty argument")
+
+            args.append(arg)
+
+        return args
