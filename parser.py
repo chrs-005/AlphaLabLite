@@ -18,7 +18,8 @@ class Program:
 
 
 class Parser:
-    def parse(self, script):
+
+    def parse(self, script) -> Program:
         lines = []
 
         for i, raw_line in enumerate(script.splitlines()):
@@ -32,7 +33,7 @@ class Parser:
 
         return Program(lines)
 
-    def _parse_line(self, line, line_num):
+    def _parse_line(self, line, line_num) -> ProgramLine:
         if "=" not in line:
             raise ValueError(f"Line {line_num}: missing '=' ")
 
@@ -53,8 +54,8 @@ class Parser:
             input_args=input_args,
         )
 
-    def _parse_call(self, call, line_num):
-        first_open = call.find("{") #finds first  {} for transf name
+    def _parse_call(self, call, line_num) -> tuple[str, list[str], list[str]]:
+        first_open = call.find("{") #finds first { - - } for transf name
         first_close = call.find("}")
 
         if first_open == -1 or first_close == -1 or first_close < first_open:
@@ -74,15 +75,15 @@ class Parser:
 
         input_call = rest[1:-1]
 
-        config_args = self._split_args(config_call)
-        input_args = self._split_args(input_call)
+        config_args = self._split_args(config_call,line_num)
+        input_args = self._split_args(input_call,line_num)
 
         return transformation_name, config_args, input_args
 
-    def _split_args(self, text):
+    def _split_args(self, text, line_num) -> list[str]:
         text = text.strip()
 
-        if text == "":
+        if text == "": #empty args
             return []
 
         pieces = text.split(",")
@@ -92,7 +93,7 @@ class Parser:
             arg = piece.strip()
 
             if arg == "":
-                raise ValueError("Found an empty argument")
+                raise ValueError(f"Line {line_num}: Found an empty argument")
 
             args.append(arg)
 
