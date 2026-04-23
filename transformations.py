@@ -68,5 +68,47 @@ class Transformations:
 
         return output_series
 
-    
+    def trans_ExponentialMovingAverage(self, config_args, input_series):
+
+        if len(config_args)!=1:
+            raise ValueError(f"ExponentialMovingAverage expects only one smoothing factor")
+        
+        
+        if len(input_series)!=1:
+            raise ValueError(f"ExponentialMovingAverage expects only one input series")
+        
+        serie=input_series[0]
+        alpha=float(config_args[0])
+        n=len(serie)
+        
+        output_series=serie.copy()
+
+        for i in range(1,n):
+            output_series[i]*=alpha
+            output_series[i]+=(1-alpha)*output_series[i-1]
+
+        return output_series
+
+    def trans_RateOfChange(self, config_args, input_series):
+        
+
+        if len(config_args)!=1:
+            raise ValueError(f"ExponentialMovingAverage expects only one period")
+        
+        
+        if len(input_series)!=1:
+            raise ValueError(f"ExponentialMovingAverage expects only one input series")
+        
+        serie=input_series[0]
+        period=int(config_args[0])
+        n=len(serie)
+        
+        output_series=[None]*n
+
+        for i in range(period, n):
+            prev=serie[i-period]
+            if abs(prev)>10E-6:
+                output_series[i]=(serie[i]-prev)/prev
+
+        return output_series
 
