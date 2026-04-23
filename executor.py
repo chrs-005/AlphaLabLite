@@ -14,7 +14,13 @@ class Executor:
         variables = {}
 
         for line in program.lines:
-            input_series = self._get_input_series(line.input_args, variables)
+            input_series = []
+
+            for variable_name in line.input_args:
+                if variable_name not in variables:
+                    raise ValueError(f"Unknown variable '{variable_name}'")
+
+                input_series.append(variables[variable_name])
 
             result = self.transformations.run(
                 line.transformation_name,
@@ -25,18 +31,3 @@ class Executor:
             variables[line.target] = result
 
         return ExecutionResult(variables)
-
-    def _get_input_series(
-        self,
-        input_args: list[str],
-        variables: dict[str, list[float]],
-    ) -> list[list[float]]:
-        input_series = []
-
-        for variable_name in input_args:
-            if variable_name not in variables:
-                raise ValueError(f"Unknown variable '{variable_name}'")
-
-            input_series.append(variables[variable_name])
-
-        return input_series
