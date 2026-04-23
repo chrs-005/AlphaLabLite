@@ -7,8 +7,8 @@ class ExecutionResult:
 
 
 class Executor:
-    def __init__(self, transformations):
-        self.transformations = transformations
+    def __init__(self, trans_runner):
+        self.trans_runner = trans_runner
 
     def execute(self, program: Program) -> ExecutionResult:
         variables = {}
@@ -22,7 +22,7 @@ class Executor:
 
                 input_series.append(variables[variable_name])
 
-            result = self.transformations.run(
+            result = self.trans_runner.run(
                 line.transformation_name,
                 line.config_args,
                 input_series,
