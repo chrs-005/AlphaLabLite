@@ -11,12 +11,14 @@ class App:
         self.executor = Executor(Transformations())
         self.storage = Storage()
 
+
+
     def execute_script(self, script):
         program = self.parser.parse(script)
-        execution_result = self.executor.execute(program)
-        execution_id = self.storage.save_execution(execution_result.variables)
+        result = self.executor.execute(program)
+        id = self.storage.save_execution(result.variables)
 
-        return execution_id
+        return id
 
     def view_items(self, execution_id, items):
         saved_items = self.storage.load_items(execution_id, items)

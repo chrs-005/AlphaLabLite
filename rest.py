@@ -14,7 +14,10 @@ class RestHandler(BaseHTTPRequestHandler):
         
         #Assuming path format :"/ROUTENAME/..."
         path_parts = parsed_url.path.split("/")
+        
         route_name = ""
+
+
 
         if len(path_parts) > 1:
             route_name = path_parts[1] 
@@ -52,7 +55,6 @@ class RestHandler(BaseHTTPRequestHandler):
     def handle_execute(self):
         content_length = int(self.headers.get("Content-Length", 0))
         body = self.rfile.read(content_length).decode("utf-8")
-
         try:
             data = json.loads(body)
             script = data["script"]

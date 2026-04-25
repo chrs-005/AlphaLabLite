@@ -2,13 +2,14 @@ import json
 import sqlite3
 import uuid
 from pathlib import Path
-
+#The SQL commands were generated in collaborations with my dear LLM
 
 class Storage:
     def __init__(self, db_path="alphalablite.db"):
         project_folder = Path(__file__).parent
         self.db_path = project_folder / db_path
         self._create_tables()
+
 
     def _create_tables(self):
         with sqlite3.connect(self.db_path) as connection:
@@ -22,8 +23,11 @@ class Storage:
                 """
             )
 
+
+
+
     def save_execution(self, variables):
-        # Save every computed variable under one execution id
+        #Save every computed variable under one executionID
 
         execution_id = str(uuid.uuid4())
 
@@ -40,10 +44,13 @@ class Storage:
         return execution_id
 
     def load_items(self, execution_id, item_names):
+
+
         if not item_names:
             return {}
 
         variablenames = ",".join(["?"] * len(item_names))
+
         with sqlite3.connect(self.db_path) as connection:
             rows = connection.execute(
                 f"""

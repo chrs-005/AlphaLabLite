@@ -95,3 +95,12 @@ Saved variables are stored in a local SQLite database:
 ```txt
 alphalablite.db
 ```
+
+## References
+
+- `urllib.parse.parse_qs`:
+  https://docs.python.org/3/library/urllib.parse.html#urllib.parse.parse_qs
+- `urllib.parse.urlparse`:
+  https://docs.python.org/3/library/urllib.parse.html#urllib.parse.urlparse
+- `uuid`:
+  https://docs.python.org/3/library/uuid.html

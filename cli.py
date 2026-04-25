@@ -7,14 +7,13 @@ from app import App
 def execute_command():
     script = sys.stdin.read()
     app = App()
-    execution_id = app.execute_script(script)
+    id = app.execute_script(script)
 
-    print(f"Script sucessfully executed: {execution_id}")
-
-
-def view_command(execution_id, items):
+    print(f"Script sucessfully executed: {id}")
+    
+def view_command(id, items):
     app = App()
-    saved_items = app.view_items(execution_id, items)
+    saved_items = app.view_items(id, items)
 
     for name, series in saved_items.items():
         print(f"{name}:")
@@ -23,6 +22,7 @@ def view_command(execution_id, items):
 
 
 if __name__ == "__main__":
+    #The below parser section is purely from chatgpt, did not know how CLI parsers work
     parser = argparse.ArgumentParser()
     subparsers = parser.add_subparsers(dest="command")
 
