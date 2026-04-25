@@ -3,6 +3,7 @@ from parser import Parser
 from storage import Storage
 from transformations import Transformations
 
+# Shared app flow used by both CLI and REST, and potential future interfaces
 
 class App:
     def __init__(self):

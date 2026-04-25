@@ -12,6 +12,7 @@ class Executor:
 
     def execute(self, program: Program) -> ExecutionResult:
         variables = {}
+        #Save every computed variable under one execution id
 
         for line in program.lines:
             input_series = []

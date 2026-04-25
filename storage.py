@@ -23,6 +23,8 @@ class Storage:
             )
 
     def save_execution(self, variables):
+        # Save every computed variable under one execution id
+
         execution_id = str(uuid.uuid4())
 
         with sqlite3.connect(self.db_path) as connection:
