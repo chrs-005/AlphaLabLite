@@ -41,7 +41,7 @@ class Parser:
         target = left.strip()
 
         if target == "":
-            raise ValueError(f"Line {line_num}: invalid target '{target}'")
+            raise ValueError(f"Line {line_num}: empty target")
 
         transformation_name, config_args, input_args = self._parse_call(
             right.strip(), line_num
@@ -62,10 +62,9 @@ class Parser:
             raise ValueError(f"Line {line_num}: invalid transformation call")
 
         transformation_name = call[:first_open].strip()
+
         if transformation_name == "":
-            raise ValueError(
-                f"Line {line_num}: invalid transformation '{transformation_name}'"
-            )
+            raise ValueError(f"Line {line_num}: empty transformation name")
 
         config_call = call[first_open + 1 : first_close]
         rest = call[first_close + 1 :].strip()

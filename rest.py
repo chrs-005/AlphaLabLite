@@ -7,8 +7,52 @@ from app import App
 
 class RestHandler(BaseHTTPRequestHandler):
     def do_POST(self):
+        parsed_url = urlparse(self.path)
+        post_routes = {
+            "execute": self.handle_execute,
+        }#add later POST routes here
+        
+        #Assuming path format :"/ROUTENAME/..."
+        path_parts = parsed_url.path.split("/")
+        route_name = ""
+
+        if len(path_parts) > 1:
+            route_name = path_parts[1] 
+
+        handler = post_routes.get(route_name)
+
+        if handler is None:
+            self._send_json(404, {"message": "Not found"})
+            return
+
+        handler()
+
+
+    def do_GET(self):
+        parsed_url = urlparse(self.path)
+        get_routes = {
+            "view": self.handle_view,
+        } #add later GET routes here
+
+        path_parts = parsed_url.path.split("/")
+        route_name = ""
+
+        if len(path_parts) > 1:
+            route_name = path_parts[1]
+
+        handler = get_routes.get(route_name)
+
+        if handler is not None:
+            handler(parsed_url)
+            return
+
+        self._send_json(404, {"message": "Not found"})
+
+
+    def handle_execute(self):
         content_length = int(self.headers.get("Content-Length", 0))
         body = self.rfile.read(content_length).decode("utf-8")
+
         try:
             data = json.loads(body)
             script = data["script"]
@@ -25,8 +69,7 @@ class RestHandler(BaseHTTPRequestHandler):
         except Exception as error:
             self._send_json(400, {"message": str(error)})
 
-    def do_GET(self):
-        parsed_url = urlparse(self.path)
+    def handle_view(self, parsed_url):
         execution_id = parsed_url.path.removeprefix("/view/")
         query = parse_qs(parsed_url.query)
         items = query.get("items", [])
