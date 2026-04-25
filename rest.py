@@ -2,26 +2,18 @@ import json
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from urllib.parse import parse_qs, urlparse
 
-from executor import Executor
-from parser import Parser
-from storage import Storage
-from transformations import Transformations
+from app import App
 
 
 class RestHandler(BaseHTTPRequestHandler):
     def do_POST(self):
-        body = self.rfile.read().decode("utf-8")
+        content_length = int(self.headers.get("Content-Length", 0))
+        body = self.rfile.read(content_length).decode("utf-8")
         try:
             data = json.loads(body)
             script = data["script"]
-
-            parser = Parser()
-            executor = Executor(Transformations())
-            storage = Storage()
-
-            program = parser.parse(script)
-            execution_result = executor.execute(program)
-            execution_id = storage.save_execution(execution_result.variables)
+            app = App()
+            execution_id = app.execute_script(script)
 
             self._send_json(
                 200,
@@ -40,8 +32,8 @@ class RestHandler(BaseHTTPRequestHandler):
         items = query.get("items", [])
 
         try:
-            storage = Storage()
-            saved_items = storage.load_items(execution_id, items)
+            app = App()
+            saved_items = app.view_items(execution_id, items)
             self._send_json(200, saved_items)
         except Exception as error:
             self._send_json(400, {"message": str(error)})
@@ -59,5 +51,5 @@ class RestHandler(BaseHTTPRequestHandler):
 
 if __name__ == "__main__":
     server = HTTPServer(("127.0.0.1", 8000), RestHandler)
-    print("Runnig on http://127.0.0.1:8000")
+    print("Running on http://127.0.0.1:8000")
     server.serve_forever()

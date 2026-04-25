@@ -1,30 +1,20 @@
 import argparse
-import json
 import sys
 
-from executor import Executor
-from parser import Parser
-from storage import Storage
-from transformations import Transformations
+from app import App
 
 
 def execute_command():
     script = sys.stdin.read()
-
-    parser = Parser()
-    executor = Executor(Transformations())
-    storage = Storage()
-
-    program = parser.parse(script)
-    execution_result = executor.execute(program)
-    execution_id = storage.save_execution(execution_result.variables)
+    app = App()
+    execution_id = app.execute_script(script)
 
     print(f"Script sucessfully executed: {execution_id}")
 
 
 def view_command(execution_id, items):
-    storage = Storage()
-    saved_items = storage.load_items(execution_id, items)
+    app = App()
+    saved_items = app.view_items(execution_id, items)
 
     for name, series in saved_items.items():
         print(f"{name}:")
@@ -50,4 +40,3 @@ if __name__ == "__main__":
         view_command(args.id, args.items)
     else:
         parser.print_help()
-
